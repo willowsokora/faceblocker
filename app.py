@@ -81,7 +81,7 @@ def block_faces():
             'extension': 'mp4',
             'id': file_id
         }
-    elif is_image(filename):
+    elif file and is_image(file.filename):
         file_id = str(uuid.uuid4())
         filename = secure_filename(file_id + file.filename)
         filepath = os.path.join(UPLOAD_FOLDER, filename)
@@ -99,24 +99,6 @@ def block_faces():
         }
     else:
         abort(500)
-
-@app.route('/video', methods=['GET'])
-def get_video():
-    file_id = request.args.get('id')
-    file_path = os.path.join(OUTPUT_FOLDER, file_id + '.mp4')
-    if os.path.exists(file_path):
-        return send_file(file_path, mimetype='video/mp4')
-    else:
-        return abort(404)
-
-@app.route('/image', methods=['GET'])
-def get_image():
-    file_id = request.args.get('id')
-    file_path = os.path.join(OUTPUT_FOLDER, file_id + '.png')
-    if os.path.exists(file_path):
-        return send_file(file_path, mimetype='image/png')
-    else:
-        return abort(404)
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)

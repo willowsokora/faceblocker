@@ -10,7 +10,6 @@ import ffmpeg
 load_dotenv('.env')
 
 UPLOAD_FOLDER = os.getenv('INPUT_DIR')
-print(UPLOAD_FOLDER)
 OUTPUT_FOLDER = os.getenv('OUTPUT_DIR')
 VIDEO_EXTENSIONS = {'mov', 'mp4', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v'}
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png'}

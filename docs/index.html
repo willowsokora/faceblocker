@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Face Blocker</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-pageloader@0.3.0/dist/css/bulma-pageloader.min.css">
+        <link rel="stylesheet" href="style.css">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="title">Face Blocker</h1>
+            <p class="subtitle">
+                Face Blocker uses machine learning to detect faces in images and videos, and apply a pixelation effect so faces can't be identified. While your videos and images are uploaded to the cloud, they are only stored as long as necessary to blur them. Once the blurring process is complete, your results are stored for a maximum of 30 minutes, or until you download them, whichever comes first. In an effort to be open about how this works, the code is available on <a href="https://github.com/jacobsokora/faceblocker" target="_blank">GitHub</a>.
+                <br />
+                <br />
+                It's important to note that an automated process will never be perfect, please double check that all faces were adequately blocked out before posting on social media!
+            </p>
+            <form id="uploadform" action="javascript:upload();" enctype="multipart/form-data">
+                <div class="field">
+                    <div class="control">
+                        <div class="file has-name">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="video" id="video" accept="video/*, image/*">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Choose a file…
+                                    </span>
+                                </span>
+                                <span class="file-name">No file selected</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button id="submit" type="submit" class="button is-primary" disabled>Block faces</button>
+                    </div>
+                    <div class="control hidden" id="download">
+                        <a id="download-button" class="button">Download</a>
+                    </div>
+                </div>
+            </form>
+            <br />
+            <a href="https://secure.actblue.com/donate/bail_funds_george_floyd" class="button is-large" target="_blank">Donate to bail funds</a>
+            <div class="pageloader is-bottom-to-top">
+                <span class="title">Blocking out faces...</span>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function upload() {
+                $('#submit').attr('disabled', true)
+                $('.pageloader').addClass('is-active')
+                var formData = new FormData()
+                formData.append('video', $('#video').prop('files')[0])
+                $.ajax({
+                    url: 'https://faceblocker.jacobsokora.me/blockfaces',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    method: 'POST',
+                    success: (data) => {
+                        $('.pageloader').removeClass('is-active')
+                        $('#download').removeClass('hidden')
+                        $('#download-button').attr('href', `https://faceblocker.jacobsokora.me/${data.type}?id=${data}`)
+                        $('#download-button').attr('download', `blurred.${data.extension}`)
+                    }
+                })
+            }
+
+            $(() => {
+                const videoInput = $('#video');
+                videoInput.change(() => {
+                    if (videoInput.prop('files').length > 0) {
+                        $('#submit').removeAttr('disabled');
+                        $('.file-name').text(videoInput.prop('files')[0].name)
+                    } else {
+                        $('#submit').attr('disabled', true)
+                        $('.file-name').text('No file selected')
+                    }
+                })
+                
+            });
+        </script>
+    </body>
+</html>

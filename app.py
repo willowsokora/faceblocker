@@ -1,9 +1,11 @@
 import os
 import uuid
+from dotenv import load_dotenv
 from flask import Flask, flash, request, send_file, abort
 from werkzeug.utils import secure_filename
 import cv2 as cv
 import numpy as np
+import ffmpeg
 
 load_dotenv('.env')
 
@@ -64,7 +66,8 @@ def block_faces():
         file.save(filepath)
         capture = cv.VideoCapture(filepath)
         fourcc = cv.VideoWriter_fourcc(*'mp4v')
-        output_filepath = os.path.join(OUTPUT_FOLDER, file_id + '.mp4')
+        output_filepath = os.path.join(OUTPUT_FOLDER, file_id + '-tmp.mp4')
+        final_output_path = os.path.join(OUTPUT_FOLDER, file_id + '.mp4')
         writer = None
         while (capture.isOpened()):
             ret, color = capture.read()
@@ -78,6 +81,12 @@ def block_faces():
                 break
         capture.release()
         writer.release()
+        original_video = ffmpeg.input(filepath)
+        audio = original_video.audio
+        blurred_video = ffmpeg.input(output_filepath)
+        video = blurred_video.video
+        out = ffmpeg.output(audio, video, final_output_path)
+        out.run()
         os.remove(filepath)
         return {
             'type': 'video',

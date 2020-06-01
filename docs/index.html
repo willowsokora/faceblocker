@@ -80,6 +80,11 @@
                 const videoInput = $('#video');
                 videoInput.change(() => {
                     if (videoInput.prop('files').length > 0) {
+                        if (videoInput.prop('files').size > 550 * 1000000) {
+                            videoInput.val('')
+                            alert('Your video must be smaller than 550MB')
+                            return
+                        }
                         $('#submit').removeAttr('disabled');
                         $('.file-name').text(videoInput.prop('files')[0].name)
                     } else {

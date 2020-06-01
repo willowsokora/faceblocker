@@ -5,8 +5,11 @@ from werkzeug.utils import secure_filename
 import cv2 as cv
 import numpy as np
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'input')
-OUTPUT_FOLDER = os.path.join(os.getcwd(), 'output')
+load_dotenv('.env')
+
+UPLOAD_FOLDER = os.getenv('INPUT_DIR')
+print(UPLOAD_FOLDER)
+OUTPUT_FOLDER = os.getenv('OUTPUT_DIR')
 VIDEO_EXTENSIONS = {'mov', 'mp4', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v'}
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png'}
 
